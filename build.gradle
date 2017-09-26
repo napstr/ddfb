@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'com.sedmelluq.jdaction' version '1.0.2' //check for unused RestActions
+}
+
+group = 'space.npstr'
+version = '0.0.1-' + (System.getenv('TRAVIS') ? System.getenv('TRAVIS_BUILD_NUMBER') : 'SNAPSHOT')
+
+mainClassName = "space.npstr.discordapiaibot.Main"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()                               // JDA, maybe others
+    mavenCentral()                          // everything else
+    mavenLocal()                            // local maven repo, mostly for testing stuff
+    maven { url 'https://jitpack.io' }      //for getting builds from github
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:3.3.1_281'                                             //discord API
+    compile 'org.slf4j:slf4j-api:1.7.25'                                            //logging framework
+    compile 'ch.qos.logback:logback-classic:1.2.3'                                  //logging framework
+    compile 'org.yaml:snakeyaml:1.18'                                               //parse yaml files
+
+    compile 'ai.api:libai:1.6.12'
+
+    //QA
+    compile 'com.google.code.findbugs:annotations:3.0.1'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
+
+processResources {
+    filesMatching('**/app.properties') {
+        filter {
+            //noinspection GroovyAssignabilityCheck
+            it.replace('%APP_VERSION_TOKEN%', version)
+        }
+    }
+}
+
+compileJava.dependsOn 'clean'
+compileJava.options.encoding = 'UTF-8'
+compileJava.options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"

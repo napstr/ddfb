@@ -1,0 +1,19 @@
+---
+
+isDebug: true     # set this to false in production
+
+prod:
+  discordToken: "" #discord token of your prod bot
+  apiAiToken: "" #client access token from ai.api
+  channels:
+    - "1234567890" #support channel
+    - "9876543210" #another support channel
+  status: "Ask me about whatever!"
+
+debug:
+  discordToken: "" #discord token of your debug bot
+  apiAiToken: "" #developer access token from ai.api
+  channels:
+    - "1234567890" #debug channel
+    - "9876543210" #another debug channel
+  status: "Ask me about whatever!"
