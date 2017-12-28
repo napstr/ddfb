@@ -4,7 +4,7 @@ isDebug: true     # set this to false in production
 
 prod:
   discordToken: "" #discord token of your prod bot
-  apiAiToken: "" #client access token from ai.api
+  dialogflowToken: "" #client access token from dialogflow
   channels:
     - "1234567890" #support channel
     - "9876543210" #another support channel
@@ -12,7 +12,7 @@ prod:
 
 debug:
   discordToken: "" #discord token of your debug bot
-  apiAiToken: "" #developer access token from ai.api
+  dialogflowToken: "" #developer access token from dialogflow
   channels:
     - "1234567890" #debug channel
     - "9876543210" #another debug channel

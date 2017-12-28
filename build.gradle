@@ -1,51 +1,67 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
+
 plugins {
     id 'java'
     id 'application'
     id 'idea'
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'com.sedmelluq.jdaction' version '1.0.2' //check for unused RestActions
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
 }
 
-group = 'space.npstr'
-version = '0.0.1-' + (System.getenv('TRAVIS') ? System.getenv('TRAVIS_BUILD_NUMBER') : 'SNAPSHOT')
+group = 'space.npstr.ddfb' //discord dialogflow bot
+version = '0.0.2-SNAPSHOT'
+ext {
+    moduleName = 'ddfb'
+}
 
-mainClassName = "space.npstr.discordapiaibot.Main"
+mainClassName = "space.npstr.ddfb.Main"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 9
+targetCompatibility = 9
 
 repositories {
     jcenter()                               // JDA, maybe others
     mavenCentral()                          // everything else
     mavenLocal()                            // local maven repo, mostly for testing stuff
-    maven { url 'https://jitpack.io' }      //for getting builds from github
+    maven { url 'https://jitpack.io' }      // for getting builds from github
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.3.1_281'                                             //discord API
+    compile 'net.dv8tion:JDA:3.4.0_318'                                             //discord API
     compile 'org.slf4j:slf4j-api:1.7.25'                                            //logging framework
     compile 'ch.qos.logback:logback-classic:1.2.3'                                  //logging framework
-    compile 'org.yaml:snakeyaml:1.18'                                               //parse yaml files
+    compile 'org.yaml:snakeyaml:1.19'                                               //parse yaml files
 
-    compile 'ai.api:libai:1.6.12'
+    compile 'ai.api:libai:1.6.12' //https://github.com/dialogflow/dialogflow-java-client
 
     //QA
-    compile 'com.google.code.findbugs:annotations:3.0.1'
+    compile 'com.github.spotbugs:spotbugs-annotations:3.1.1'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
-}
-
-processResources {
-    filesMatching('**/app.properties') {
-        filter {
-            //noinspection GroovyAssignabilityCheck
-            it.replace('%APP_VERSION_TOKEN%', version)
-        }
-    }
+    gradleVersion = '4.4.1'
+    distributionType = DistributionType.ALL
 }
 
 compileJava.dependsOn 'clean'
 compileJava.options.encoding = 'UTF-8'
 compileJava.options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+
+
+shadowJar {
+    archiveName = "ddfb.jar"
+}
+
+processResources {
+    //inject values into app.properties
+    filesMatching("**/app.properties") {
+        filter ReplaceTokens, tokens: [
+                "project.version"   : project.version,
+                "project.groupId"   : project.group,
+                "project.artifactId": project.ext.moduleName,
+                "env.BUILD_NUMBER"  : (System.getenv('CI') ? System.getenv('BUILD_NUMBER') : 'DEV'),
+                "env.BUILD_TIME"    : System.currentTimeMillis() + ''
+        ]
+    }
+}

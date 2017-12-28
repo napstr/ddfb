@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+  bot:
+    image: napstr/ddfb:master
+    restart: on-failure:3
+    volumes:
+      - ./config.yaml:/opt/ddfb/config.yaml
+      - ./logs:/opt/ddfb/logs
+      - ./logs/gc:/opt/ddfb/logs/gc
+    entrypoint:
+      - java
+      - -jar
+      - -Xmx256m
+      - -XX:+HeapDumpOnOutOfMemoryError
+      - -XX:HeapDumpPath=emergencydump.hprof
+      - -Xlog:gc*:logs/gc/gc-%t.log::filesize=1048576   #1gb
+      - -XX:+UseG1GC
+      - -XX:+ParallelRefProcEnabled
+      - -XX:+UseStringDeduplication
+      - ddfb.jar

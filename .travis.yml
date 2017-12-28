@@ -1,4 +1,33 @@
+sudo: required
+
+services:
+- docker
+
+env:
+  global:
+    - BUILD_NUMBER: "$TRAVIS_BUILD_NUMBER"
+    - DOCKER_USERNAME: napstr
+    - secure: "k+0610cUwfD2t6tT/qCh5o1JHYWjv6kIFjZcGI9JbCDEoD0YpV938gaMnltgjgwSdxq8FQpt+tAk5WNUtp50BUCqdmZqBSu9y60Xd5eWSOecA1JDfDxFIj4Pxpj8+5h/QGhsIVRvjyTB4aTsqaOqagjEWspbvkYNH5RZhRHilt9/3enkOqlbm4yul1ILwZaEpuCkB7Izdvd1+vhlWGkGrRNoQTOXFhFrP4YJ0B5a8FB7DQK5IrfxhSZintQaKmEOpbtIkhd2A6u5pgMLyVoHELa0VnOiBW//bkt3oXHPTR4ZGwOVqLh8QJDfhUKO8xKSY6yXkvms9c1tJUp1/g6pqMEzbR1d3JNXkyn3VkVmVvZvnGS72IbYgGa1xOou3N4yqjd0Ix4qYCquZqOb+MmxW5+PFEbu+Blbb9xxZgDX2CXKf3vsdn2DJvJFcaaWaYO78cKv97mYYj9Ca3aFIGtgacfV8ps6lXy/ms43y5wZTMSChF7dSsXLQ6NG+Wux+Nrrx1cAtyU0qwkyc/oFdslqSYj/y9BlCts/P0IsZC4+IKYRcOqDOkeq4VGEYmQPpTNsqxBhXtE0OQq4eqa+KRJrapEM+mUEAEAoRxF3IDQETMsVGD6oeXUJTlHGHg/A/Xc5d+Qw0D70bkM48sgie8nui2k6Zkn0wPnlcoVBrDBChJQ="
+
 language: java
 
 jdk:
-  - oraclejdk8
+  - oraclejdk9
+
+cache:
+  directories:
+    - "$HOME/.m2"
+    - "$HOME/.gradle"
+    - ".gradle/wrapper"
+    - ".gradle/caches"
+
+script:
+  - "./gradlew shadowJar --info"
+  - IMAGE_TAG=$(echo ${TRAVIS_BRANCH} | sed -e 's/\//_/g')
+  - echo $IMAGE_TAG
+  - docker build --tag "napstr/ddfb:$IMAGE_TAG" .
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker push napstr/ddfb:$IMAGE_TAG
+  - docker logout
