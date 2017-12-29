@@ -31,6 +31,7 @@ import ai.api.model.AIResponse;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -110,6 +111,10 @@ public class Main {
                     if (out != null && !out.isEmpty()) {
                         out = rePlaceHolders(out);
                         log.info(String.format("\nUser input: %s\nBot output: %s", input, out));
+                        TextChannel textChannel = event.getTextChannel();
+                        if (textChannel != null && !textChannel.canTalk()) {
+                            return; //dont try to post in a guild channel where we cant talk
+                        }
                         event.getChannel().sendMessage(out).queue();
                     }
                 } else {
