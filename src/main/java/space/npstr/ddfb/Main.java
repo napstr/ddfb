@@ -26,6 +26,7 @@ package space.npstr.ddfb;
 
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
+import ai.api.AIServiceException;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
@@ -120,6 +121,14 @@ public class Main {
                 } else {
                     log.error(response.getStatus().getErrorDetails());
                 }
+            } catch (AIServiceException e) {
+                String message = "No error details provided";
+                AIResponse response = e.getResponse();
+                if (response != null) {
+                    message = response.getStatus().getErrorDetails();
+                }
+
+                log.error(message, e);
             } catch (Exception ex) {
                 log.error("Random exception", ex);
             }
