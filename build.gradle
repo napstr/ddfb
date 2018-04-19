@@ -16,8 +16,8 @@ ext {
 
 mainClassName = "space.npstr.ddfb.Main"
 
-sourceCompatibility = 9
-targetCompatibility = 9
+sourceCompatibility = 10
+targetCompatibility = 10
 
 repositories {
     jcenter()                               // JDA, maybe others
