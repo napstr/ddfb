@@ -99,24 +99,29 @@ public class Main {
             }
 
             String input = event.getMessage().getContentStripped();
+            log.debug("Channel {} received message {}", event.getChannel().getIdLong(), event.getMessage().getContentRaw());
             try {
                 AIResponse response = aiDataService.request(new AIRequest(input));
 
                 if (response.getStatus().getCode() == 200) {
 
                     if (response.getResult().getAction().equals("shutup")) {
+                        log.debug("Shut up intent received, returning.");
                         return;
                     }
 
                     String out = response.getResult().getFulfillment().getSpeech();
                     if (out != null && !out.isEmpty()) {
                         out = rePlaceHolders(out);
-                        log.info(String.format("\nUser input: %s\nBot output: %s", input, out));
                         TextChannel textChannel = event.getTextChannel();
                         if (textChannel != null && !textChannel.canTalk()) {
+                            log.debug("Can't talk in channel, skipping response: {}", out);
                             return; //dont try to post in a guild channel where we cant talk
                         }
+                        log.info(String.format("\nUser input: %s\nBot output: %s", input, out));
                         event.getChannel().sendMessage(out).queue();
+                    } else {
+                        log.debug("Empty response received.");
                     }
                 } else {
                     log.error(response.getStatus().getErrorDetails());
