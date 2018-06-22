@@ -5,7 +5,7 @@ plugins {
     id 'application'
     id 'idea'
     id 'com.gorylenko.gradle-git-properties' version '1.4.21'
-    id 'com.github.johnrengelman.shadow' version '2.0.3'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 group = 'space.npstr.ddfb' //discord dialogflow bot
@@ -27,15 +27,15 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.6.0_356'                                             //discord API
+    compile 'net.dv8tion:JDA:3.6.0_376'                                             //discord API
     compile 'org.slf4j:slf4j-api:1.7.25'                                            //logging framework
     compile 'ch.qos.logback:logback-classic:1.2.3'                                  //logging framework
-    compile 'org.yaml:snakeyaml:1.20'                                               //parse yaml files
+    compile 'org.yaml:snakeyaml:1.21'                                               //parse yaml files
 
     compile 'ai.api:libai:1.6.12' //https://github.com/dialogflow/dialogflow-java-client
 
     //QA
-    compile 'com.github.spotbugs:spotbugs-annotations:3.1.2'
+    compile 'com.github.spotbugs:spotbugs-annotations:3.1.5'
 }
 
 wrapper {
