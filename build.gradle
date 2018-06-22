@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'space.npstr.ddfb' //discord dialogflow bot
-version = '0.0.3-SNAPSHOT'
+version = '0.0.4-SNAPSHOT'
 ext {
     moduleName = 'ddfb'
 }
